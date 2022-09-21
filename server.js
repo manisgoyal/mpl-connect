@@ -36,7 +36,8 @@ mplRoutes.route('/').get(function (req, res) {
 mplRoutes.route('/:id').get(function (req, res) {
     let id = req.params.id;
     Team.findById(id, function (err, team) {
-        res.json(team);
+        if(!team){res.status(404).json("User doesn't exist");}
+        else{res.json(team);}
     });
 });
 
@@ -52,11 +53,26 @@ mplRoutes.route('/add').post(function (req, res) {
         });
 });
 
+// To login to the account on app
+mplRoutes.route('/login').post(function (req, res) {
+    let query = req.body;
+    // would be in format {teamId: <value>, teamName: <value>}
+    Team.find(query, function (err, team) {
+        if(JSON.stringify(team) == "[]"){
+            res.status(404).json("User doesn't exist");
+        }else{
+            res.json(team);
+    }}).catch(err => {
+        res.status(400).send("Login not possible");
+    });
+})
+
+
 // Update by id
 mplRoutes.route('/update/:id').post(function (req, res) {
     Team.findById(req.params.id, function (err, team) {
         if (!team) {
-            res.status(404).send("data is not found");
+            res.status(404).json("data is not found");
         } else {
             team.teamId = req.body.teamId;
             team.teamName = req.body.teamName;
@@ -76,7 +92,7 @@ mplRoutes.route('/update/:id').post(function (req, res) {
 app.use('/api', mplRoutes);
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static( 'client/build' ));
+    app.use(express.static('client/build'));
 
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'client', 'build', 'index.html')); // relative path
