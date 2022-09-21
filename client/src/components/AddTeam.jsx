@@ -24,7 +24,7 @@ function AddTeam() {
     setMember3(e.target.value);
   }
   const handleSubmit = (e) => {
-    alert('A form was submitted with TeamId : ' + teamId +
+    alert('A new team was added with TeamId : ' + teamId +
       ' ,TeamName : ' + teamName + ' and members : ' + member1 + ', ' + member2 + ' and ' + member3);
       axios.post('/api/add', {
         teamId: teamId,
