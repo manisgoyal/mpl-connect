@@ -21,6 +21,26 @@ let Team = new TeamSchema({
     member3: {
         required: true,
         type: String
+    },
+    trackId: {
+        required: true,
+        type: Number
+    },
+    penaltyCount: {
+        required: true,
+        type: Number
+    },
+    checkPoint: {
+        required: true,
+        type: Number
+    },
+    firstLog: {
+        required: true,
+        type: Boolean
+    },
+    time: {
+        // required: true,
+        type: Date
     }
 });
 

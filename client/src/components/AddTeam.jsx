@@ -27,11 +27,16 @@ function AddTeam() {
     alert('A new team was added with TeamId : ' + teamId +
       ' ,TeamName : ' + teamName + ' and members : ' + member1 + ', ' + member2 + ' and ' + member3);
       axios.post('/api/add', {
-        teamId: teamId,
+        teamId: parseInt(teamId),
         teamName: teamName,
         member1: member1,
         member2: member2,
-        member3: member3
+        member3: member3,
+        trackId: parseInt(teamId) % 5,
+        penaltyCount: 0,
+        checkPoint: 0,
+        firstLog: true,
+        time: null
       })
       .then(function (response) {
         console.log(response);

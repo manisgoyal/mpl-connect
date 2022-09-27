@@ -23,8 +23,6 @@ class App extends Component {
            <Route path="/ShowProg" element={<ShowProg />} />
          </Routes>
        </Router>
-
-      // document.getElementById("root")
     );
   }
 }
