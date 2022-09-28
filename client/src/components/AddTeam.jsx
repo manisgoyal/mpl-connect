@@ -36,7 +36,8 @@ function AddTeam() {
         penaltyCount: 0,
         checkPoint: 0,
         firstLog: true,
-        time: null
+        time: null,
+        finalTime: null
       })
       .then(function (response) {
         console.log(response);

@@ -1,19 +1,19 @@
 const mongoose = require('mongoose');
-const TrackSchema = mongoose.Schema;
+const CrosswordSchema = mongoose.Schema;
 
-let Track = new TrackSchema({
+let Crossword = new CrosswordSchema({
     trackId: {
         required: true,
         type: Number
     },
-    track:[{
+    clues:[{
         required: true,
         type: String
     }],
-    round2:{
+    answer: {
         required: true,
         type: String
     }
 });
 
-module.exports = mongoose.model('Track', Track);
+module.exports = mongoose.model('Crossword', Crossword);

@@ -8,6 +8,7 @@ const port = process.env.PORT || 5000;
 
 let Team = require("./models/team.model");
 let Track = require("./models/track.model")
+let Crossword = require("./models/crossword.model")
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -209,6 +210,114 @@ mplRoutes.route("/getNextPos/:id").get(function (req, res) {
         res.send(error);
     }
 });
+
+
+// To get the present clue
+mplRoutes.route("/getPresentClue/:id").get(function (req, res) {
+    try {
+        let id = req.params.id;
+        Team.findById(id, async function (err, team) {
+            if (err) res.status(400).send(err);
+            if (!team) {
+                res.status(404).json("data is not found");
+            }
+            // console.log(team)
+            const trackId = team.trackId
+            const chNum = team.checkPoint
+            if (chNum == 5) {
+                Crossword.findOne({
+                    trackId: trackId
+                }, function (err, crosswordItem) {
+                    console.log(crosswordItem)
+                    if (crosswordItem == null) {
+                        return res.status(404).json("No tracks");
+                    } else {
+                        clueList = crosswordItem.clues
+                        console.log(clueList)
+                        res.send(clueList)
+                    }
+                })
+            } else {
+                Track.findOne({
+                    trackId: trackId
+                }, function (err, trackItem) {
+                    console.log(trackItem)
+                    if (trackItem == null) {
+                        return res.status(404).json("No tracks");
+                    } else {
+                        if (chNum == 2) {
+                            r2Clue = trackItem.round2
+                            console.log(r2Clue)
+                            res.send(r2Clue)
+                        } else {
+                            const imgLink = "https://mpl-connect.herokuapp.com/images/track" + trackId + "/round" + chNum + ".png"
+                            console.log(imgLink)
+                            res.send(imgLink)
+                        }
+                    }
+                })
+            }
+            // console.log(newC)
+            // console.log(team)
+        });
+    } catch (error) {
+        res.send(error);
+    }
+});
+
+
+// To check for final otp
+mplRoutes.route("/finalOtpCheck").post(function (req, res) {
+    let query = req.body;
+    // would be in format {teamId: <value>, answer: <value>}
+    Team.findById(query.id, function (err, team) {
+        console.log(team)
+        if (team == null) {
+            return res.status(404).json("User doesn't exist");
+        } else {
+            // Take clue and match answer
+            // if matches then take final timer and done
+            // else increase penalty 
+            const trackId = team.trackId
+            Crossword.findOne({ trackId: trackId }, function (err, crosswordItem) {
+                console.log(crosswordItem)
+                if (crosswordItem == null) {
+                    return res.status(404).json("No tracks");
+                } else {
+                    clueAnswer = crosswordItem.answer;
+                    if (clueAnswer == query.answer) {
+                        var time = new Date();
+                        team.finalTime = time
+                        team.checkPoint = team.checkPoint + 1
+                        team.save().then((team) => {
+                            console.log("done");
+                            res.send("Completed")
+                            return;
+                        })
+                            .catch((err) => {
+                                console.log(err);
+                                return;
+                            });
+                    }
+                    else {
+                        team.penaltyCount = team.penaltyCount + 1
+                        team.save().then((team) => {
+                            console.log("Wrong Otp");
+                            res.send("Try Again")
+                            return;
+                        })
+                            .catch((err) => {
+                                console.log(err);
+                                return;
+                            });
+                    }
+                }
+            }).catch((err) => {
+                res.status(400).send("Verification not possible");
+            });
+        }
+    });
+})
 
 
 app.use("/api", mplRoutes);

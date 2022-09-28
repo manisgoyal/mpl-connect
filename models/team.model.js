@@ -41,6 +41,10 @@ let Team = new TeamSchema({
     time: {
         // required: true,
         type: Date
+    },
+    finalTime: {
+        // required: true,
+        type: Date
     }
 });
 
