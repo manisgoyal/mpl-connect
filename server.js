@@ -20,6 +20,7 @@ mongoose.connect(
 
 const connection = mongoose.connection;
 connection.once("open", function () {
+    console.log("Connected")
     console.log("MongoDB database connection established successfully");
 });
 
@@ -55,7 +56,7 @@ mplRoutes.route("/add").post(function (req, res) {
         })
         .catch((err) => {
             console.log(err)
-            res.status(400).send("adding new team failed");
+            res.status(400).json("adding new team failed");
         });
 });
 
@@ -89,7 +90,7 @@ mplRoutes.route("/login").post(function (req, res) {
             }
         }
     }).catch((err) => {
-        res.status(400).send("Login not possible");
+        res.status(400).json("Login not possible");
     });
 });
 
@@ -112,7 +113,7 @@ mplRoutes.route("/update/:id").post(function (req, res) {
                     res.json("Team Information updated!");
                 })
                 .catch((err) => {
-                    res.status(400).send("Update not possible");
+                    res.status(400).json("Update not possible");
                 });
         }
     });
@@ -123,7 +124,7 @@ mplRoutes.route("/penaltyIncrease/:id").patch(function (req, res) {
     try {
         let id = req.params.id;
         Team.findById(id, async function (err, team) {
-            if (err) res.status(400).send(err);
+            if (err) res.status(400).json(err);
             if (!team) {
                 res.status(404).json("data is not found");
             }
@@ -138,11 +139,11 @@ mplRoutes.route("/penaltyIncrease/:id").patch(function (req, res) {
                     res.json("Works");
                 })
                 .catch((err) => {
-                    res.status(400).send("Update not possible");
+                    res.status(400).json("Update not possible");
                 });
         });
     } catch (error) {
-        res.send(error);
+        res.json(error);
     }
 });
 
@@ -151,7 +152,7 @@ mplRoutes.route("/checkPointIncrease/:id").patch(function (req, res) {
     try {
         let id = req.params.id;
         Team.findById(id, async function (err, team) {
-            if (err) res.status(400).send(err);
+            if (err) res.status(400).json(err);
             if (!team) {
                 res.status(404).json("data is not found");
             }
@@ -166,11 +167,11 @@ mplRoutes.route("/checkPointIncrease/:id").patch(function (req, res) {
                     res.json("Works");
                 })
                 .catch((err) => {
-                    res.status(400).send("Update not possible");
+                    res.status(400).json("Update not possible");
                 });
         });
     } catch (error) {
-        res.send(error);
+        res.json(error);
     }
 });
 
@@ -180,34 +181,36 @@ mplRoutes.route("/getNextPos/:id").get(function (req, res) {
     try {
         let id = req.params.id;
         Team.findById(id, async function (err, team) {
-            if (err) res.status(400).send(err);
+            if (err) res.status(400).json(err);
             if (!team) {
                 res.status(404).json("data is not found");
             }
             // console.log(team)
-            const trackId = team.trackId
-            const chNum = team.checkPoint
-            if (chNum == 5) {
-                res.send("The journey done");
-            } else {
-                Track.findOne({
-                    trackId: trackId
-                }, function (err, trackItem) {
-                    console.log(trackItem)
-                    if (trackItem == null) {
-                        return res.status(404).json("No tracks");
-                    } else {
-                        trackList = trackItem.track
-                        console.log(trackList[chNum])
-                        res.send(trackList[chNum])
-                    }
-                })
+            else {
+                const trackId = team.trackId
+                const chNum = team.checkPoint
+                if (chNum == 5) {
+                    res.json("The journey done");
+                } else {
+                    Track.findOne({
+                        trackId: trackId
+                    }, function (err, trackItem) {
+                        console.log(trackItem)
+                        if (trackItem == null) {
+                            return res.status(404).json("No tracks");
+                        } else {
+                            trackList = trackItem.track
+                            console.log(trackList[chNum])
+                            res.json(trackList[chNum])
+                        }
+                    })
+                }
             }
             // console.log(newC)
             // console.log(team)
         });
     } catch (error) {
-        res.send(error);
+        res.json(error);
     }
 });
 
@@ -217,7 +220,7 @@ mplRoutes.route("/getPresentClue/:id").get(function (req, res) {
     try {
         let id = req.params.id;
         Team.findById(id, async function (err, team) {
-            if (err) res.status(400).send(err);
+            if (err) res.status(400).json(err);
             if (!team) {
                 res.status(404).json("data is not found");
             }
@@ -234,7 +237,7 @@ mplRoutes.route("/getPresentClue/:id").get(function (req, res) {
                     } else {
                         clueList = crosswordItem.clues
                         console.log(clueList)
-                        res.send(clueList)
+                        res.json(clueList)
                     }
                 })
             } else {
@@ -248,11 +251,11 @@ mplRoutes.route("/getPresentClue/:id").get(function (req, res) {
                         if (chNum == 2) {
                             r2Clue = trackItem.round2
                             console.log(r2Clue)
-                            res.send(r2Clue)
+                            res.json(r2Clue)
                         } else {
                             const imgLink = "https://mpl-connect.herokuapp.com/images/track" + trackId + "/round" + chNum + ".png"
                             console.log(imgLink)
-                            res.send(imgLink)
+                            res.json(imgLink)
                         }
                     }
                 })
@@ -261,7 +264,7 @@ mplRoutes.route("/getPresentClue/:id").get(function (req, res) {
             // console.log(team)
         });
     } catch (error) {
-        res.send(error);
+        res.json(error);
     }
 });
 
@@ -291,7 +294,7 @@ mplRoutes.route("/finalOtpCheck").post(function (req, res) {
                         team.checkPoint = team.checkPoint + 1
                         team.save().then((team) => {
                             console.log("done");
-                            res.send("Completed")
+                            res.json("Completed")
                             return;
                         })
                             .catch((err) => {
@@ -303,7 +306,7 @@ mplRoutes.route("/finalOtpCheck").post(function (req, res) {
                         team.penaltyCount = team.penaltyCount + 1
                         team.save().then((team) => {
                             console.log("Wrong Otp");
-                            res.send("Try Again")
+                            res.json("Try Again")
                             return;
                         })
                             .catch((err) => {
@@ -313,7 +316,7 @@ mplRoutes.route("/finalOtpCheck").post(function (req, res) {
                     }
                 }
             }).catch((err) => {
-                res.status(400).send("Verification not possible");
+                res.status(400).json("Verification not possible");
             });
         }
     });
