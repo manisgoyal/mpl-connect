@@ -269,6 +269,64 @@ mplRoutes.route("/getPresentClue/:id").get(function (req, res) {
 });
 
 
+// To get Clue list
+mplRoutes.route("/getClueList/:id").get(async function (req, res) {
+    try {
+        let id = req.params.id;
+        var clues = [0, 0, 0, 0, 0, 0];
+        Team.findById(id, async function (err, team) {
+            if (err) res.status(400).json(err);
+            if (!team) {
+                res.status(404).json("data is not found");
+            }
+            // console.log(team)
+            const trackId = team.trackId
+            for (let i = 0; i <= 4; i++) {
+                Track.findOne({
+                    trackId: trackId
+                }, async function (err, trackItem) {
+                    // console.log(trackItem)
+                    if (trackItem == null) {
+                        return res.status(404).json("No tracks");
+                    } else {
+                        if (i == 2) {
+                            r2Clue = trackItem.round2
+                            // console.log(r2Clue)
+                            clues[i] = r2Clue
+                            console.log(clues[i])
+                        } else {
+                            const imgLink = "https://mpl-connect.herokuapp.com/images/track" + trackId + "/round" + i + ".png"
+                            // console.log(imgLink)
+                            clues[i] = imgLink
+                            console.log(clues[i])
+                        }
+                    }
+                })
+            }
+            Crossword.findOne({
+                trackId: trackId
+            }, async function (err, crosswordItem) {
+                // console.log(crosswordItem)
+                if (crosswordItem == null) {
+                    return res.status(404).json("No tracks");
+                } else {
+                    clueList = crosswordItem.clues
+                    // console.log(clueList)
+                    clues[5] = clueList;
+                    console.log(clues[5]);
+
+                }
+                return res.json(clues);
+            }
+            )
+            // console.log(clues)
+            // res.json(clues);
+        });
+    } catch (error) {
+        res.json(error);
+    }
+});
+
 // To check for final otp
 mplRoutes.route("/finalOtpCheck").post(function (req, res) {
     let query = req.body;
