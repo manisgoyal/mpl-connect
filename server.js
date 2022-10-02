@@ -149,7 +149,7 @@ mplRoutes.route("/penaltyIncrease/:id").patch(function (req, res) {
 
 // To get Penalty Count
 mplRoutes.route("/penaltyCount/:id").get(function (req, res) {
-    try { 
+    try {
         let id = req.params.id;
         Team.findById(id, async function (err, team) {
             if (err) res.status(400).json(err);
