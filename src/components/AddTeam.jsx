@@ -26,19 +26,23 @@ function AddTeam() {
   const handleSubmit = (e) => {
     alert('A new team was added with TeamId : ' + teamId +
       ' ,TeamName : ' + teamName + ' and members : ' + member1 + ', ' + member2 + ' and ' + member3);
-      axios.post('/api/add', {
-        teamId: parseInt(teamId),
-        teamName: teamName,
-        member1: member1,
-        member2: member2,
-        member3: member3,
-        trackId: parseInt(teamId) % 5,
-        penaltyCount: 0,
-        checkPoint: 0,
-        firstLog: true,
-        time: null,
-        finalTime: null
-      })
+      axios.post('https://mplbackend.onrender.com/api/add', {
+        "teamId": parseInt(teamId),
+        "teamName": teamName,
+        "member1": member1,
+        "member2": member2,
+        "member3": member3,
+        "trackId": parseInt(teamId) % 5,
+        "penaltyCount": 0,
+        "checkPoint": 0,
+        "firstLog": true,
+        "time": null,
+        "finalTime": null
+    },
+    {
+      'Content-Type': 'application/json;charset=UTF-8',
+      "Access-Control-Allow-Origin": "*",
+  })
       .then(function (response) {
         console.log(response);
       })

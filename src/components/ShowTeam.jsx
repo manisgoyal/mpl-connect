@@ -2,7 +2,7 @@ import React from "react";
 import axios from 'axios';
 
 function ShowTeam() {
-  axios.get("/api/").then(function (response){
+  axios.get("https://mplbackend.onrender.com/api/").then(function (response){
     document.getElementById('tableElements').innerHTML = response.data.map(function (team){
       return ('<tr><td>' +team.teamId + '</td><td>' +team.teamName + '</td><td>' + team.member1 + '</td><td>' + team.member2 + '</td><td>' + team.member3 + '</td></tr>');
     }).join(" ");
